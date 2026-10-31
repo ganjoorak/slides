@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>معرفی گنجورک</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@500;700;800&display=swap">
+<style>
+/* ===========================================
+   THEME: magazine cover, one committed look
+   Emerald canvas, navy ink, oat paper. Flat print: no radius, shadow or gradient.
+   Lalezar carries every display moment, Vazirmatn everything else.
+   =========================================== */
+:root {
+    color-scheme: light;
+    --bg: #3CD896;
+    --ink: #0F1A5C;
+    --paper: #F1E9D6;
+    --stage-bg: #0F1A5C;
+    --slide-bg: #3CD896;
+    --font-display: 'Lalezar', 'Vazirmatn', Tahoma, sans-serif;
+    --font-body: 'Vazirmatn', Tahoma, sans-serif;
+    --rule: 4px solid var(--ink);
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===========================================
+   FIXED 16:9 STAGE: base styles from frontend-slides
+   =========================================== */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+.deck-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+.deck-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+
+.slide.active,
+.slide.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+img,
+video,
+canvas,
+svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.deck-controls {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+@media print {
+    html,
+    body {
+        width: 1920px;
+        height: auto;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-viewport {
+        position: static;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-stage {
+        position: static;
+        width: auto;
+        height: auto;
+        transform: none !important;
+        background: none;
+    }
+
+    .slide {
+        position: relative;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: 1920px;
+        height: 1080px;
+        break-after: page;
+        page-break-after: always;
+    }
+
+    .slide:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    .deck-controls {
+        display: none !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* ===========================================
+   SLIDE FRAME
+   .frame holds each slide's layout so .slide keeps display:block for printing.
+   =========================================== */
+.slide { color: var(--ink); font-family: var(--font-body); font-weight: 500; }
+.slide.dark { background: var(--ink); color: var(--bg); --rule: 4px solid var(--bg); }
+
+.frame {
+    position: absolute;
+    inset: 0;
+    padding: 96px 110px 110px;
+    display: flex;
+    flex-direction: column;
+    gap: 44px;
+}
+
+.folio {
+    position: absolute;
+    left: 110px;
+    bottom: 48px;
+    font-size: 26px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ===========================================
+   TYPE
+   Persian keeps zero letter-spacing and looser leading so letters stay joined.
+   =========================================== */
+.head { font-family: var(--font-display); font-weight: 400; font-size: 112px; line-height: 1.2; text-wrap: balance; }
+.eyebrow { font-size: 30px; font-weight: 800; }
+.lede { font-size: 46px; font-weight: 500; line-height: 1.5; max-width: 1300px; text-wrap: balance; }
+.statement { font-family: var(--font-display); font-weight: 400; font-size: 136px; line-height: 1.3; text-wrap: balance; }
+.ltr { direction: ltr; unicode-bidi: isolate; }
+
+/* ===========================================
+   COMPONENTS
+   =========================================== */
+.double { flex: none; height: 18px; border-top: var(--rule); border-bottom: var(--rule); }
+
+/* Masthead row used by cover and closing */
+.mast { display: flex; justify-content: space-between; align-items: center; font-size: 30px; font-weight: 800; }
+.mast img { width: 76px; height: 76px; }
+
+.tiles { flex: 1; display: flex; gap: 28px; min-height: 0; }
+.tile { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 18px; padding: 44px; }
+.tile.ink { background: var(--ink); color: var(--bg); }
+.tile.paper { background: var(--paper); color: var(--ink); }
+.tile h3 { font-family: var(--font-display); font-weight: 400; font-size: 64px; line-height: 1.2; }
+.tile p { font-size: 34px; line-height: 1.5; }
+.tile .fig { font-family: var(--font-display); font-size: 150px; line-height: 1.1; }
+.tiles.col { flex-direction: column; gap: 24px; }
+.tile.compact { padding: 26px 40px; gap: 6px; justify-content: center; }
+.tile.compact h3 { font-size: 56px; }
+.tile.compact p { font-size: 32px; }
+.tile.line { flex-direction: row; align-items: center; justify-content: flex-start; gap: 44px; padding: 20px 40px; }
+.tile.line .fig { font-size: 112px; flex: none; min-width: 230px; }
+
+/* App screenshot in a phone-sized column at the end of the reading direction */
+.frame.has-shot { padding-left: 636px; }
+.shot { position: absolute; left: 110px; top: 96px; width: 470px; height: 874px; object-fit: cover; object-position: top; border: var(--rule); background: var(--ink); }
+
+/* Section opener: inverse panel with a jumbo numeral, on the reading-start side */
+.opener { position: absolute; inset: 0; display: grid; grid-template-columns: 760px 1fr; }
+.opener .panel { background: var(--ink); color: var(--bg); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 460px; line-height: 1; }
+.opener .body { padding: 110px; display: flex; flex-direction: column; justify-content: center; gap: 36px; }
+.opener .head { font-size: 136px; }
+
+/* Numbered rows and stack rows share the agenda treatment */
+.rows { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; border-bottom: var(--rule); }
+.row { flex: 1; display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 24px; border-top: var(--rule); }
+.row .ord, .row .name { font-family: var(--font-display); font-size: 96px; line-height: 1.2; }
+.row.stack { grid-template-columns: 460px 1fr; }
+.row.stack .name { font-size: 60px; }
+.chips { display: flex; flex-wrap: wrap; gap: 14px; }
+.slide.dark .chip { background: var(--bg); color: var(--ink); }
+a.chip { text-decoration: none; }
+.chip { background: var(--ink); color: var(--bg); font-size: 36px; font-weight: 700; padding: 12px 28px; direction: ltr; unicode-bidi: isolate; }
+
+/* Screenshot slide */
+.split { flex: 1; display: grid; grid-template-columns: 1fr 1002px; gap: 56px; align-items: center; min-height: 0; }
+.split img { display: block; width: 1002px; height: 696px; object-fit: cover; object-position: top; border: var(--rule); background: var(--ink); }
+.points { display: flex; flex-direction: column; }
+.points p { font-size: 44px; font-weight: 700; line-height: 1.35; padding: 28px 0; border-top: var(--rule); }
+.points p:last-child { border-bottom: var(--rule); }
+
+/* Architecture diagram: boxes and wiring share stage coordinates */
+.node { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; }
+.node strong { font-size: 44px; font-weight: 800; line-height: 1.2; }
+.node span { font-size: 28px; font-weight: 700; }
+.node.ink { background: var(--ink); color: var(--bg); }
+.node.paper { background: var(--paper); }
+.node.line { border: var(--rule); }
+.wires { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+.note { position: absolute; font-size: 28px; font-weight: 800; }
+
+/* ===========================================
+   ENTRANCE MOTION
+   Plays on the active slide and always ends visible.
+   =========================================== */
+.slide.visible .reveal { animation: rise 0.7s var(--ease) both; }
+.slide.visible .reveal.d1 { animation-delay: 0.12s; }
+.slide.visible .reveal.d2 { animation-delay: 0.24s; }
+.slide.visible .reveal.d3 { animation-delay: 0.36s; }
+@keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+
+/* ===========================================
+   DECK CHROME: progress bar and inline editing
+   =========================================== */
+.deck-controls { width: min(360px, 60vw); height: 5px; background: rgba(241, 233, 214, 0.35); bottom: 10px; }
+.deck-progress { height: 100%; width: 0; margin-inline-start: 0; background: var(--paper); transition: width 0.3s var(--ease); }
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle { position: fixed; top: 16px; left: 16px; z-index: 10001; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; font: 700 15px var(--font-body); color: var(--paper); background: var(--ink); border: 2px solid var(--paper); padding: 8px 14px; cursor: pointer; }
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle:focus-visible { opacity: 1; outline: 3px solid var(--paper); outline-offset: 2px; }
+[contenteditable="true"] { outline: 2px dashed currentColor; outline-offset: 4px; }
+</style>
+
+<div class="deck-viewport" dir="rtl" lang="fa">
+<main class="deck-stage" id="deckStage">
+
+<!-- === COVER === -->
+<section class="slide active visible" aria-label="جلد">
+<div class="frame" style="padding:64px 96px 80px;gap:0">
+<div class="double"></div>
+<div class="mast" style="padding:18px 0"><span>معرفی پروژه</span></div>
+<div class="double"></div>
+<h1 class="reveal" style="flex:1;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:400;font-size:440px;line-height:1.1">گنجورک</h1>
+<div class="reveal d1" style="display:flex;justify-content:space-between;align-items:center;border-top:var(--rule);padding-top:28px">
+<p style="font-size:54px;font-weight:800">راحت‌تر شعر بخوانیم و شعر گوش دهیم.</p>
+<p class="chip" style="font-weight:500;font-size:32px">ganjoorak.ir</p>
+</div>
+</div>
+</section>
+
+<!-- === AGENDA === -->
+<section class="slide" aria-label="فهرست">
+<div class="frame">
+<h2 class="head reveal">فهرست</h2>
+<div class="rows">
+<div class="row reveal d1"><span class="ord">۱</span><span class="name">گنجورک و هدفش</span></div>
+<div class="row reveal d2"><span class="ord">۲</span><span class="name">کارکردها</span></div>
+<div class="row reveal d3"><span class="ord">۳</span><span class="name">استک فنی و نحوهٔ استفاده از ایجنت‌ها</span></div>
+</div>
+</div>
+</section>
+
+<!-- === SECTION 1: WHAT IT IS === -->
+<section class="slide" aria-label="گنجورک چیست">
+<div class="opener">
+<div class="panel">۱</div>
+<div class="body">
+<h2 class="head reveal">گنجورک چیست</h2>
+<p class="lede reveal d1">درگاهی برای خواندن و شنیدن شعر فارسی؛ هر بار شعری تصادفی، در قالبی کوچک.</p>
+<p class="eyebrow reveal d2">پروژه‌ای مستقل از گنجور</p>
+</div>
+</div>
+</section>
+
+<section class="slide dark" aria-label="ریشهٔ نام">
+<div class="frame" style="justify-content:center;align-items:center;text-align:center;gap:40px">
+<p class="eyebrow reveal">ریشهٔ نام</p>
+<h2 class="reveal d1" style="font-family:var(--font-display);font-weight:400;font-size:300px;line-height:1.2">گنجور + ک</h2>
+<p class="lede reveal d2">«ک» پسوند تصغیر است؛ شعر در حالتی کوچک نمایش داده می‌شود.</p>
+</div>
+</section>
+
+<section class="slide dark" aria-label="هدف اصلی">
+<div class="frame" style="justify-content:center;gap:48px">
+<div class="reveal" style="display:flex;align-items:center;gap:36px">
+<div class="double" style="flex:1"></div>
+<p style="font-family:var(--font-display);font-size:96px;line-height:1.2">هدف اصلی گنجورک</p>
+<div class="double" style="flex:1"></div>
+</div>
+<p class="statement reveal d1" style="font-size:92px;text-align:center">چه می‌شود اگر شبکه اجتماعی ساده‌ای داشته باشیم برای کسانی که شعر دوست دارند و یا کسانی که در وسط روز می‌خواهند خستگی خود را با خواندن یک بیت شعر از بین ببرند.</p>
+</div>
+</section>
+
+<section class="slide" aria-label="هدف پروژه">
+<div class="frame">
+<p class="eyebrow reveal">هدف پروژه</p>
+<h2 class="head reveal d1" style="font-size:120px">یک تجربهٔ بهتر از شنیدن و خواندن شعر فارسی</h2>
+<div class="tiles">
+<div class="tile ink reveal d1"><h3>جایگزین اسکرول بی‌معنا</h3><p>به‌جای اینستاگرام و یوتیوب، چند دقیقه شعر.</p></div>
+<div class="tile paper reveal d2"><h3>روشی خوب برای گذران وقت</h3><p>می‌خواهیم این رفتار را به کاربر القا کنیم که شعر خواندن هم راه خوبی برای گذراندن وقت است.</p></div>
+</div>
+</div>
+</section>
+
+<!-- === SECTION 2: FEATURES === -->
+<section class="slide" aria-label="کارکردها">
+<div class="opener">
+<div class="panel">۲</div>
+<div class="body">
+<h2 class="head reveal">کارکردها</h2>
+<p class="lede reveal d1">از یک شعر تصادفی تا مشاعره با دوستان.</p>
+</div>
+</div>
+</section>
+
+<section class="slide" aria-label="منابع شعر">
+<img class="shot reveal d2" src="assets/poets.jpg" alt="صفحهٔ شاعران گنجورک">
+<div class="frame has-shot">
+<h2 class="head reveal">منابع شعر</h2>
+<p class="eyebrow reveal d1">شعرها را از گنجور می‌آوریم، همراه با اکولالیا و مجموعهٔ محلی</p>
+<div class="tiles col">
+<div class="tile ink line reveal d1"><span class="fig">۱۳۸٬۳۸۲</span><p>شعر در نمایهٔ گنجور</p></div>
+<div class="tile paper line reveal d2"><span class="fig">۲۴۲</span><p>شاعر از گنجور</p></div>
+<div class="tile ink line reveal d3"><span class="fig">۲۲۳</span><p>شاعر از اکولالیا</p></div>
+</div>
+</div>
+</section>
+
+<section class="slide" aria-label="خواندن و کشف">
+<img class="shot reveal d2" src="assets/home.jpg" alt="صفحهٔ اصلی گنجورک با یک شعر تصادفی">
+<div class="frame has-shot">
+<h2 class="head reveal">هر بار، یک شعر تازه</h2>
+<div class="tiles col">
+<div class="tile ink compact reveal d1"><h3>صفحهٔ اصلی</h3><p>شعرهای تصادفی، تمام‌صفحه و پشت سر هم.</p></div>
+<div class="tile paper compact reveal d2"><h3>جست‌وجو</h3><p>شاعر، مصرع یا یک واژه؛ با حالت معنایی.</p></div>
+</div>
+</div>
+</section>
+
+<section class="slide" aria-label="نمایشگر شعر">
+<div class="frame">
+<h2 class="head reveal">نمایشگر شعر</h2>
+<div class="split">
+<div class="points reveal d1">
+<p>خوانش صوتی با چند خواننده</p>
+<p>برجسته‌شدن بیت هم‌پای صدا</p>
+<p>کارت تصویری و ویدیویی برای اشتراک</p>
+</div>
+<img class="reveal d2" src="assets/viewer.jpg" alt="نمایشگر گنجورک با غزلی از حافظ و نوار پخش صدا">
+</div>
+</div>
+</section>
+
+<section class="slide" aria-label="تکه‌های شعر">
+<img class="shot reveal d2" src="assets/profile.jpg" alt="صفحهٔ عمومی یک کاربر نمونه با تکه‌های شعر">
+<div class="frame has-shot">
+<h2 class="head reveal">شعر، میان آدم‌ها</h2>
+<div class="tiles col">
+<div class="tile paper compact reveal d1"><h3>تکه‌های شعر</h3><p>هر جای شعری را که دوست دارید در صفحهٔ خودتان بگذارید.</p></div>
+<div class="tile ink compact reveal d2"><h3>دنبال کردن</h3><p>تکه‌های تازهٔ دوستان، به شکل استوری.</p></div>
+<div class="tile paper compact reveal d3"><h3>صفحهٔ عمومی</h3><p>نشانی شخصی، بنر و آواتار؛ با امکان خصوصی‌کردن.</p></div>
+</div>
+</div>
+</section>
+
+<section class="slide" aria-label="استریک و نشان">
+<div class="frame">
+<h2 class="head reveal">استریک و نشان‌ها</h2>
+<p class="lede reveal d1">استریک فقط روزانه نیست و نشان هم فقط برای روزهای پیاپی نیست.</p>
+<div class="tiles" style="gap:20px">
+<div class="tile ink reveal d1" style="padding:36px"><span class="fig">۳</span><p>سه روز پیاپی</p></div>
+<div class="tile paper reveal d1" style="padding:36px"><span class="fig">۷</span><p>یک هفته شعر</p></div>
+<div class="tile ink reveal d2" style="padding:36px"><span class="fig">۳۰</span><p>یک ماه شعر</p></div>
+<div class="tile paper reveal d3" style="padding:36px"><h3>مشاعره</h3><p>نشان برای مشاعره‌های زیاد</p></div>
+</div>
+</div>
+</section>
+
+<section class="slide" aria-label="مشاعره">
+<img class="shot reveal d2" style="width:414px" src="assets/moshaere.jpg" alt="صفحهٔ مشاعرهٔ همگانی با بیت‌های نمونه">
+<div class="frame has-shot">
+<h2 class="head reveal">مشاعره</h2>
+<div class="tiles col">
+<div class="tile ink compact reveal d1"><h3>صفحهٔ همگانی</h3><p>یک صفحهٔ مشترک برای همه، با جدول برترین‌های هفت روز.</p></div>
+<div class="tile paper compact reveal d2"><h3>مسابقهٔ تیمی</h3><p>دو تیم یک تا پنج نفره؛ هر نوبت از ۳۰ ثانیه تا یک روز.</p></div>
+</div>
+<p class="eyebrow reveal d3">سرور داور است: حرف اشتباه و بیت تکراری رد می‌شود.</p>
+</div>
+</section>
+
+<section class="slide" aria-label="شخصی‌سازی و نصب">
+<img class="shot reveal d2" src="assets/paper.jpg" alt="نمایشگر شعر در تم کاغذی">
+<div class="frame has-shot">
+<h2 class="head reveal">شعر به سلیقهٔ شما</h2>
+<div class="tiles col">
+<div class="tile paper line reveal d1"><span class="fig">۳</span><div><h3>تم</h3><p>تاریک، روشن و کاغذی</p></div></div>
+<div class="tile ink line reveal d2"><span class="fig">۸</span><div><h3>قلم</h3><p>از وزیرمتن تا ناهید</p></div></div>
+<div class="tile paper line reveal d3"><span class="fig ltr">PWA</span><div><h3>نصب</h3><p>اجرا از صفحهٔ اصلی گوشی</p></div></div>
+</div>
+</div>
+</section>
+
+<!-- === SECTION 3: STACK === -->
+<section class="slide" aria-label="استک فنی">
+<div class="opener">
+<div class="panel">۳</div>
+<div class="body">
+<h2 class="head reveal">استک فنی</h2>
+<p class="lede reveal d1">یک رابط Next.js و یک سرویس کوچک Go، روی یک VPS.</p>
+</div>
+</div>
+</section>
+
+<section class="slide" aria-label="معماری">
+<div class="frame"><h2 class="head reveal">معماری</h2></div>
+<svg class="wires" viewBox="0 0 1920 1080" aria-hidden="true" fill="none" stroke="#0F1A5C" stroke-width="4">
+<defs>
+<marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0F1A5C" stroke="none"/></marker>
+</defs>
+<rect x="442" y="306" width="680" height="208"/>
+<path d="M1534 410H1460" marker-end="url(#tip)"/>
+<path d="M1178 410H1104" marker-end="url(#tip)"/>
+<path d="M822 410H748" marker-start="url(#tip)" marker-end="url(#tip)"/>
+<path d="M466 410H390" marker-end="url(#tip)"/>
+<path d="M960 514V672" marker-end="url(#tip)"/>
+<path d="M430 672V592H1490V672" marker-end="url(#tip)"/>
+<path d="M430 592V672" marker-end="url(#tip)"/>
+</svg>
+<p class="note" style="left:442px;top:256px;width:680px;text-align:center">دو کانتینر Docker</p>
+<div class="node paper" style="left:1534px;top:330px;width:276px;height:160px"><strong>کاربر</strong><span>مرورگر یا PWA</span></div>
+<div class="node paper" style="left:1178px;top:330px;width:276px;height:160px"><strong class="ltr">nginx</strong><span class="ltr">HTTPS</span></div>
+<div class="node ink" style="left:822px;top:330px;width:276px;height:160px"><strong class="ltr">Next.js</strong><span>رابط و پراکسی</span></div>
+<div class="node ink" style="left:466px;top:330px;width:276px;height:160px"><strong class="ltr">Go</strong><span>حساب و مشاعره</span></div>
+<div class="node paper" style="left:110px;top:330px;width:276px;height:160px"><strong class="ltr">SQLite</strong><span>پایگاه داده</span></div>
+<div class="node line" style="left:1300px;top:676px;width:380px;height:150px"><strong class="ltr" style="font-size:40px">api.ganjoor.net</strong><span>متن و صدای شعر</span></div>
+<div class="node line" style="left:770px;top:676px;width:380px;height:150px"><strong class="ltr" style="font-size:40px">ganjgah.ir</strong><span>جست‌وجوی معنایی</span></div>
+<div class="node line" style="left:240px;top:676px;width:380px;height:150px"><strong style="font-size:40px">داده‌های محلی</strong><span>اکولالیا و نمایه‌ها</span></div>
+<div style="position:absolute;left:110px;top:852px;width:1700px;font-size:34px;font-weight:700;line-height:1.5">
+<p>معماری را زیاد پیچیده نکرده‌ایم تا توسعه سخت نشود.</p>
+<p>برای نسخهٔ اندروید و دسکتاپ از Kotlin Multiplatform استفاده می‌کنیم.</p>
+</div>
+</section>
+
+<section class="slide" aria-label="فناوری‌ها">
+<div class="frame">
+<h2 class="head reveal">فناوری‌ها</h2>
+<p class="eyebrow reveal d1">همه روی آخرین نسخه</p>
+<div class="rows">
+<div class="row stack reveal d1"><span class="name">وب</span><div class="chips"><span class="chip">Next.js</span><span class="chip">React</span><span class="chip">Tailwind CSS</span><span class="chip">Base UI</span><span class="chip">Framer Motion</span></div></div>
+<div class="row stack reveal d2"><span class="name">سرور</span><div class="chips"><span class="chip">Go</span><span class="chip">SQLite</span></div></div>
+<div class="row stack reveal d3"><span class="name">اندروید و دسکتاپ</span><div class="chips"><span class="chip">Kotlin Multiplatform</span></div></div>
+</div>
+</div>
+</section>
+
+<section class="slide" aria-label="سرویس حساب‌ها">
+<div class="frame">
+<h2 class="head reveal">سرویس حساب‌ها</h2>
+<div class="tiles">
+<div class="tile ink reveal d1"><h3>ورود ساده</h3><p>فقط نام کاربری و گذرواژه، بدون ایمیل.</p></div>
+<div class="tile paper reveal d2"><h3>مشاعرهٔ زنده</h3><p>به‌روزرسانی با polling هر ۲ تا ۴ ثانیه.</p></div>
+<div class="tile ink reveal d3"><h3>پنل مدیریت</h3><p>نقش‌ها، مسدودسازی، حذف محتوا و ثبت رویدادها.</p></div>
+</div>
+</div>
+</section>
+
+<section class="slide" aria-label="استفاده از ایجنت‌ها">
+<div class="frame">
+<h2 class="head reveal">استفاده از ایجنت‌ها</h2>
+<div class="chips reveal d1"><span class="chip">Cursor Agent</span><span class="chip">Jules</span></div>
+<div class="tiles">
+<div class="tile ink reveal d1"><span class="fig">۱۰۵</span><p>کامیت با نام خود ایجنت‌ها</p></div>
+<div class="tile paper reveal d2"><h3>راهنمای پروژه</h3><p>فایل AGENTS.md نکته‌های پروژه را به ایجنت‌ها می‌گوید.</p></div>
+<div class="tile ink reveal d3"><h3>قرارداد مکتوب</h3><p>قرارداد API در docs مرجع مشترک وب و موبایل است.</p></div>
+</div>
+<a class="chip reveal d3" style="align-self:flex-start" href="https://github.com/ganjoorak/ganjoorak">github.com/ganjoorak/ganjoorak</a>
+</div>
+</section>
+</main>
+<div class="deck-controls" aria-hidden="true"><div class="deck-progress" id="deckProgress"></div></div>
+</div>
+
+<div class="edit-hotzone" id="editHotzone"></div>
+<button class="edit-toggle" id="editToggle" type="button" title="ویرایش متن (E)">ویرایش</button>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   Next: Left arrow, Down, Page Down, Space. Previous: Right arrow, Up, Page Up.
+   The deck reads right to left, so horizontal keys and swipes follow that order.
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = [...document.querySelectorAll('.slide')];
+        this.currentSlide = 0;
+        this.stage = document.getElementById('deckStage');
+        this.progress = document.getElementById('deckProgress');
+        this.addFolios();
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        const fromHash = /^#slide-(\d+)$/.exec(location.hash);
+        this.showSlide(fromHash ? Number(fromHash[1]) - 1 : 0);
+    }
+
+    addFolios() {
+        const total = this.slides.length.toLocaleString('fa-IR');
+        this.slides.forEach((slide, i) => {
+            if (i === 0 || slide.querySelector('.opener')) return;
+            const folio = document.createElement('span');
+            folio.className = 'folio';
+            folio.textContent = `${(i + 1).toLocaleString('fa-IR')} از ${total}`;
+            slide.append(folio);
+        });
+    }
+
+    setupStageScale() {
+        const scale = () => {
+            const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * factor) / 2;
+            const y = (window.innerHeight - 1080 * factor) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.isContentEditable) return;
+            if (['ArrowLeft', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
+                e.preventDefault();
+                this.showSlide(this.currentSlide + 1);
+            } else if (['ArrowRight', 'ArrowUp', 'PageUp'].includes(e.key)) {
+                e.preventDefault();
+                this.showSlide(this.currentSlide - 1);
+            } else if (e.key === 'Home') {
+                this.showSlide(0);
+            } else if (e.key === 'End') {
+                this.showSlide(this.slides.length - 1);
+            }
+        });
+    }
+
+    setupTouchNav() {
+        let startX = 0;
+        document.addEventListener('touchstart', (e) => { startX = e.changedTouches[0].clientX; }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) < 50) return;
+            this.showSlide(this.currentSlide + (dx > 0 ? 1 : -1));
+        }, { passive: true });
+    }
+
+    setupWheelNav() {
+        let locked = false;
+        document.addEventListener('wheel', (e) => {
+            if (locked || Math.abs(e.deltaY) < 20) return;
+            locked = true;
+            this.showSlide(this.currentSlide + (e.deltaY > 0 ? 1 : -1));
+            setTimeout(() => { locked = false; }, 600);
+        }, { passive: true });
+    }
+
+    showSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === this.currentSlide);
+            slide.classList.toggle('visible', i === this.currentSlide);
+        });
+        this.progress.style.width = `${((this.currentSlide + 1) / this.slides.length) * 100}%`;
+    }
+}
+
+/* ===========================================
+   INLINE EDITING
+   Press E or use the top-left corner. Edits stay in this browser;
+   Ctrl+S saves a copy of the file where the browser allows downloads.
+   =========================================== */
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.key = 'ganjoorak-deck-edits-v1';
+        this.items = [...document.querySelectorAll('.slide h1, .slide h2, .slide h3, .slide p, .slide .name, .slide .fig, .node strong, .node span')];
+        this.toggle = document.getElementById('editToggle');
+        this.restore();
+        this.bind();
+    }
+
+    restore() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(this.key) || '{}');
+            Object.entries(saved).forEach(([i, text]) => { if (this.items[i]) this.items[i].textContent = text; });
+        } catch { /* storage may be unavailable */ }
+    }
+
+    persist() {
+        try {
+            const saved = {};
+            this.items.forEach((el, i) => { if (el.dataset.edited) saved[i] = el.textContent; });
+            localStorage.setItem(this.key, JSON.stringify(saved));
+        } catch { /* storage may be unavailable */ }
+    }
+
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        this.toggle.classList.toggle('active', this.isActive);
+        this.items.forEach((el) => el.setAttribute('contenteditable', String(this.isActive)));
+    }
+
+    saveFile() {
+        this.items.forEach((el) => el.removeAttribute('contenteditable'));
+        const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+        if (this.isActive) this.items.forEach((el) => el.setAttribute('contenteditable', 'true'));
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+        link.download = 'ganjoorak-slides.html';
+        link.click();
+    }
+
+    bind() {
+        const hotzone = document.getElementById('editHotzone');
+        let hideTimeout = null;
+        const hideSoon = () => {
+            hideTimeout = setTimeout(() => {
+                if (!this.isActive) this.toggle.classList.remove('show');
+            }, 400);
+        };
+        const stay = () => clearTimeout(hideTimeout);
+
+        this.toggle.addEventListener('click', () => this.toggleEditMode());
+        hotzone.addEventListener('click', () => this.toggleEditMode());
+        hotzone.addEventListener('mouseenter', () => { stay(); this.toggle.classList.add('show'); });
+        hotzone.addEventListener('mouseleave', hideSoon);
+        this.toggle.addEventListener('mouseenter', stay);
+        this.toggle.addEventListener('mouseleave', hideSoon);
+
+        document.addEventListener('input', (e) => {
+            e.target.dataset.edited = '1';
+            this.persist();
+        });
+        /* e.code keeps the shortcut working on a Persian keyboard layout */
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyE' && !e.ctrlKey && !e.metaKey && !e.target.isContentEditable) this.toggleEditMode();
+            if (e.code === 'KeyS' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                this.saveFile();
+            }
+        });
+    }
+}
+
+new SlidePresentation();
+new InlineEditor();
+</script>
+</html>

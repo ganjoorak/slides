@@ -523,16 +523,26 @@
     .bio {
         display: flex;
         flex-direction: column;
-        gap: 0;
+        gap: 22px;
     }
 
     .bio p {
-        font-size: 40px;
+        font-size: 38px;
         font-weight: 500;
         line-height: 1.55;
         padding: 0;
         border: none;
         color: var(--ink);
+    }
+
+    .me-card .name {
+        font-size: 52px;
+        font-weight: 800;
+        line-height: 1.3;
+    }
+
+    .channels a.is-pending {
+        opacity: 0;
     }
 
     .bio b {
@@ -704,11 +714,23 @@
     }
 
     .slide.visible .reveal.d2 {
-        animation-delay: 0.24s;
+        animation-delay: 0.28s;
     }
 
     .slide.visible .reveal.d3 {
-        animation-delay: 0.36s;
+        animation-delay: 0.44s;
+    }
+
+    .slide.visible .reveal.d4 {
+        animation-delay: 0.64s;
+    }
+
+    .slide.visible .reveal.d5 {
+        animation-delay: 0.84s;
+    }
+
+    .slide.visible .reveal.d6 {
+        animation-delay: 1.04s;
     }
 
     @keyframes rise {
@@ -1105,20 +1127,25 @@
             <div class="me">
                 <div class="me-card">
                     <h2 class="reveal">کی گنجورک<br>رو ساخته؟</h2>
-                    <p class="reveal d1">من هادی‌ام و به‌تازگی ۱۹ سالم شده.</p>
-                    <div class="me-links reveal d2"><a class="chip" href="https://t.me/hadi7546">@hadi7546</a><a
+                    <p class="name reveal d1">من هادی‌ام</p>
+                    <p class="reveal d2">به‌تازگی ۱۹ سالم شده.</p>
+                    <div class="me-links reveal d3"><a class="chip" href="https://t.me/hadi7546">@hadi7546</a><a
                             class="chip" href="https://hadi7546.ir">hadi7546.ir</a></div>
                 </div>
                 <div class="me-body">
-                    <div class="bio reveal d1">
-                        <p>قبلاً فلاتر کار می‌کردم، الان بیشتر سمت‌وسوی <b>کاتلین و وب</b> هستم. زیاد با <b>ایجنت‌ها</b> کار می‌کنم. به <b>خبر نوشتن</b> و <b>گردوندن جامعه‌های مختلف</b> علاقه دارم، زیاد آهنگ گوش می‌دم، (<b>رادیوهد</b> فنم).</p>
+                    <div class="bio">
+                        <p class="reveal d1">قبلاً فلاتر کار می‌کردم؛ الان بیشتر سمت‌وسوی <b>کاتلین و وب</b> هستم.</p>
+                        <p class="reveal d2">زیاد با <b>ایجنت‌ها</b> کار می‌کنم.</p>
+                        <p class="reveal d3">قبلاً <b>خبر می‌نوشتم</b> — کانال <span class="ltr">geekalerts</span>.</p>
+                        <p class="reveal d4">و <b>جامعه‌ها</b> را هم می‌چرخانم؛ <span class="ltr">gnome_fa</span> و <span class="ltr">persian_flutter</span>.</p>
+                        <p class="reveal d5">زیاد آهنگ گوش می‌دم؛ <b>رادیوهد</b> فنم.</p>
                     </div>
-                    <div class="channels reveal d2">
-                        <a href="https://t.me/geekalerts"><img src="assets/geekalerts.png"
+                    <div class="channels">
+                        <a class="reveal d3" href="https://t.me/geekalerts"><img src="assets/geekalerts.png"
                                 alt="نشان کانال geekalerts"><span class="ltr">geekalerts</span></a>
-                        <a href="https://t.me/gnome_fa"><img src="assets/gnome_fa.png" alt="نشان کانال gnome_fa"><span
+                        <a class="reveal d4" href="https://t.me/gnome_fa"><img src="assets/gnome_fa.png" alt="نشان کانال gnome_fa"><span
                                 class="ltr">gnome_fa</span></a>
-                        <a href="https://t.me/persian_flutter"><img src="assets/persian_flutter.png"
+                        <a class="reveal d4" href="https://t.me/persian_flutter"><img src="assets/persian_flutter.png"
                                 alt="نشان کانال persian_flutter"><span class="ltr">persian_flutter</span></a>
                     </div>
                 </div>

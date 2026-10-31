@@ -523,20 +523,43 @@
     .bio {
         display: flex;
         flex-direction: column;
-        border-bottom: var(--rule);
+        gap: 0;
     }
 
     .bio p {
         font-size: 40px;
         font-weight: 500;
-        line-height: 1.4;
-        padding: 22px 0;
-        border-top: var(--rule);
+        line-height: 1.55;
+        padding: 0;
+        border: none;
         color: var(--ink);
     }
 
     .bio b {
         font-weight: 800;
+    }
+
+    .thanks {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 36px;
+        text-align: center;
+        padding: 80px;
+    }
+
+    .thanks h2 {
+        font-size: 140px;
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
+    .thanks .lede {
+        font-size: 44px;
+        font-weight: 600;
+        max-width: 18em;
     }
 
     .channels {
@@ -1078,10 +1101,7 @@
                 </div>
                 <div class="me-body">
                     <div class="bio reveal d1">
-                        <p>قبلاً فلاتر کار می‌کردم، الان بیشتر سمت‌وسوی <b>کاتلین و وب</b> هستم.</p>
-                        <p>زیاد با <b>ایجنت‌ها</b> کار می‌کنم.</p>
-                        <p>به <b>خبر نوشتن</b> و <b>گردوندن جامعه‌های مختلف</b> علاقه دارم.</p>
-                        <p>زیاد آهنگ گوش می‌دم، مخصوصاً <b>رادیوهد</b>.</p>
+                        <p>قبلاً فلاتر کار می‌کردم، الان بیشتر سمت‌وسوی <b>کاتلین و وب</b> هستم. زیاد با <b>ایجنت‌ها</b> کار می‌کنم. به <b>خبر نوشتن</b> و <b>گردوندن جامعه‌های مختلف</b> علاقه دارم، زیاد آهنگ گوش می‌دم، (<b>رادیوهد</b> فنم).</p>
                     </div>
                     <div class="channels reveal d2">
                         <a href="https://t.me/geekalerts"><img src="assets/geekalerts.png"
@@ -1092,6 +1112,14 @@
                                 alt="نشان کانال persian_flutter"><span class="ltr">persian_flutter</span></a>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <section class="slide dark" aria-label="تشکر">
+            <div class="thanks">
+                <h2 class="reveal">مرسی</h2>
+                <p class="lede reveal d1">کدها و نقشه‌راه اینجاست.</p>
+                <a class="chip reveal d2" href="https://github.com/ganjoorak">github.com/ganjoorak</a>
             </div>
         </section>
     </main>

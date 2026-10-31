@@ -629,13 +629,18 @@
         animation: panel-rise 0.95s var(--ease) 0.12s both;
     }
 
-    .live-rise img {
+    .live-rise img,
+    .live-rise iframe {
         display: block;
         width: 100%;
         height: 100%;
+        border: 0;
+        background: #111;
+    }
+
+    .live-rise img {
         object-fit: cover;
         object-position: top center;
-        background: #111;
     }
 
     @keyframes panel-rise {
@@ -807,9 +812,14 @@
             </div>
         </section>
 
-        <section class="slide dark" aria-label="دموی زنده" data-demo-audio="assets/hafez-sh1-ff.mp3">
+        <section class="slide dark" aria-label="دموی زنده" data-demo-audio="https://preview.ganjoorak.ir/api/audio?url=https%3A%2F%2Fi.ganjoor.net%2Fa%2F2130-ff.mp3">
             <div class="live-rise">
-                <img src="assets/preview-hafez.jpg" alt="غزل اول حافظ در گنجورک، با خوانش فریدون فرح‌اندوز">
+                <iframe
+                    title="پیش‌نمایش گنجورک — غزل اول حافظ"
+                    src="https://preview.ganjoorak.ir/hafez/ghazal/sh1?single=1"
+                    allow="autoplay; fullscreen"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </section>
 

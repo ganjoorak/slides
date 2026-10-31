@@ -566,6 +566,61 @@
         object-fit: cover;
     }
 
+
+    /* Live preview embed */
+    .live-demo {
+        flex: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 520px;
+        gap: 56px;
+        align-items: center;
+        min-height: 0;
+        width: 100%;
+        padding: 64px 72px 80px;
+        box-sizing: border-box;
+    }
+
+    .live-demo .copy {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+        min-width: 0;
+    }
+
+    .live-demo .copy .lede {
+        font-size: 40px;
+        font-weight: 600;
+        line-height: 1.45;
+        max-width: 18em;
+    }
+
+    .live-phone {
+        width: 520px;
+        height: 900px;
+        border-radius: 44px;
+        overflow: hidden;
+        border: 3px solid rgba(250, 250, 250, 0.22);
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+        background: #111;
+        justify-self: end;
+        position: relative;
+    }
+
+    .live-phone iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: #111;
+        /* scale down a bit so more of the poem chrome fits */
+        transform-origin: top center;
+    }
+
+    .live-hint {
+        font-size: 28px;
+        font-weight: 600;
+        opacity: 0.72;
+    }
+
     /* Screenshot slide */
     .split {
         flex: 1;
@@ -836,6 +891,26 @@
             </div>
         </section>
 
+
+        <section class="slide dark" aria-label="دموی زنده" data-demo-audio="https://preview.ganjoorak.ir/api/audio?url=https%3A%2F%2Fi.ganjoor.net%2Fa%2F2130-ff.mp3">
+            <div class="live-demo">
+                <div class="copy">
+                    <p class="eyebrow reveal">پریویو زنده</p>
+                    <h2 class="head reveal d1">بشنوید</h2>
+                    <p class="lede reveal d2">غزل اول حافظ، با خوانش فریدون فرح‌اندوز؛ از همان پریویوی گنجورک.</p>
+                    <p class="live-hint reveal d3">خوانش با ورود به این اسلاید خودکار پخش می‌شود.</p>
+                </div>
+                <div class="live-phone reveal d2">
+                    <iframe
+                        title="پیش‌نمایش گنجورک — غزل اول حافظ"
+                        src="https://preview.ganjoorak.ir/hafez/ghazal/sh1?single=1"
+                        allow="autoplay; fullscreen"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </section>
+
         <section class="slide" aria-label="نمایشگر شعر">
             <div class="frame">
                 <h2 class="head reveal">نمایشگر شعر</h2>
@@ -1040,6 +1115,8 @@
             this.currentSlide = 0;
             this.stage = document.getElementById('deckStage');
             this.progress = document.getElementById('deckProgress');
+            this.demoAudio = new Audio();
+            this.demoAudio.preload = 'auto';
             this.addFolios();
             this.setupStageScale();
             this.setupKeyboardNav();
@@ -1115,6 +1192,24 @@
                 slide.classList.toggle('visible', i === this.currentSlide);
             });
             this.progress.style.width = `${((this.currentSlide + 1) / this.slides.length) * 100}%`;
+            this.syncDemoAudio();
+        }
+
+        syncDemoAudio() {
+            const slide = this.slides[this.currentSlide];
+            const src = slide && slide.dataset.demoAudio;
+            if (!src) {
+                this.demoAudio.pause();
+                this.demoAudio.removeAttribute('src');
+                return;
+            }
+            if (this.demoAudio.dataset.src !== src) {
+                this.demoAudio.src = src;
+                this.demoAudio.dataset.src = src;
+                this.demoAudio.currentTime = 0;
+            }
+            const play = this.demoAudio.play();
+            if (play && typeof play.catch === 'function') play.catch(() => {});
         }
     }
 

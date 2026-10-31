@@ -837,14 +837,14 @@
             </div>
         </section>
 
-        <section class="slide dark" aria-label="دموی زنده" data-demo-audio="https://preview.ganjoorak.ir/api/audio?url=https%3A%2F%2Fi.ganjoor.net%2Fa%2F2130-ff.mp3">
+        <section class="slide dark" aria-label="پیش‌نمایش آفلاین" data-demo-audio="assets/hafez-sh1-ff.mp3">
             <div class="live-rise">
-                <iframe
-                    title="پیش‌نمایش گنجورک — غزل اول حافظ"
-                    src="https://preview.ganjoorak.ir/hafez/ghazal/sh1?single=1"
-                    allow="autoplay; fullscreen"
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <img
+                    src="assets/preview-hafez.jpg"
+                    alt="پیش‌نمایش آفلاین گنجورک — غزل اول حافظ"
+                    width="1920"
+                    height="1113"
+                    decoding="async">
             </div>
         </section>
 
@@ -1175,6 +1175,10 @@
             this.progress = document.getElementById('deckProgress');
             this.demoAudio = new Audio();
             this.demoAudio.preload = 'auto';
+            // warm the offline demo clip so the rise slide starts without wait
+            this.demoAudio.src = 'assets/hafez-sh1-ff.mp3';
+            this.demoAudio.dataset.src = 'assets/hafez-sh1-ff.mp3';
+            try { this.demoAudio.load(); } catch (_) {}
             this.addFolios();
             this.setupStageScale();
             this.setupKeyboardNav();
